@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: kitup-route-dashboard
+    runtime: docker
+    plan: free
+    healthCheckPath: /healthz
+    envVars:
+      - key: KITUP_ADMIN_TOKEN
+        generateValue: true
+      - key: KITUP_DB
+        value: /tmp/kitup.db
+# Prototype only. Free instances and ephemeral /tmp storage may reset preferences.
+# Does not deploy a PS5-accessible DNS resolver or game traffic relays.
