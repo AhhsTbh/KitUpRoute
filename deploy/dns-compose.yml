@@ -1,0 +1,26 @@
+# Deploy ONLY on a VPS with a public IPv4 address and inbound UDP/TCP 53.
+# Render web services do not expose the required UDP DNS port.
+# Keep KITUP_DNS_ALLOWED_CIDRS restricted to the PS5's current public IPv4 /32.
+services:
+  kitup-dns:
+    build:
+      context: ..
+      dockerfile: Dockerfile.dns
+    restart: unless-stopped
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    environment:
+      KITUP_DNS_BIND: "0.0.0.0"
+      KITUP_DNS_PORT: "53"
+      KITUP_DNS_UPSTREAM: "1.1.1.1"
+      KITUP_DNS_ALLOWED_CIDRS: "${KITUP_DNS_ALLOWED_CIDRS:?Set authorized public IP CIDR before starting}"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    read_only: true
+    tmpfs:
+      - /tmp
